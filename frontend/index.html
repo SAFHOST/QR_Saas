@@ -1,468 +1,1785 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeGen Pro - QR, Barcode & Business Card Generator</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeGen Pro - Professional QR Code & Business Card Generator</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<style>
+:root {
+--primary: #6366f1;
+--primary-dark: #4f46e5;
+--primary-light: #8b5cf6;
+--secondary: #10b981;
+--accent: #f59e0b;
+--danger: #ef4444;
+--light: #f8fafc;
+--dark: #1e293b;
+--gray: #64748b;
+--gray-light: #e2e8f0;
+--premium: #f97316;
+--border-radius: 12px;
+--border-radius-lg: 16px;
+--shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+--shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+--transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+body {
+background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
+color: var(--dark);
+line-height: 1.6;
+overflow-x: hidden;
+}
+
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 20px;
+}
+
+/* Header & Navigation */
+header {
+background: rgba(255, 255, 255, 0.95);
+backdrop-filter: blur(10px);
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.navbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 1rem 0;
+}
+
+.logo {
+display: flex;
+align-items: center;
+gap: 12px;
+font-size: 1.5rem;
+font-weight: 700;
+color: var(--primary);
+text-decoration: none;
+}
+
+.logo-icon {
+width: 40px;
+height: 40px;
+background: linear-gradient(135deg, var(--primary), var(--primary-light));
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-weight: bold;
+font-size: 1.2rem;
+}
+
+.nav-links {
+display: flex;
+gap: 2rem;
+align-items: center;
+}
+
+.nav-links a {
+text-decoration: none;
+color: var(--dark);
+font-weight: 500;
+transition: var(--transition);
+position: relative;
+}
+
+.nav-links a:hover {
+color: var(--primary);
+}
+
+.nav-links a:after {
+content: '';
+position: absolute;
+bottom: -5px;
+left: 0;
+width: 0;
+height: 2px;
+background: var(--primary);
+transition: var(--transition);
+}
+
+.nav-links a:hover:after {
+width: 100%;
+}
+
+.auth-buttons {
+display: flex;
+gap: 1rem;
+align-items: center;
+}
+
+.user-menu {
+display: flex;
+align-items: center;
+gap: 1rem;
+}
+
+.user-avatar {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+background: linear-gradient(135deg, var(--primary), var(--primary-light));
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-weight: 600;
+}
+
+.btn {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 0.75rem 1.5rem;
+border-radius: var(--border-radius);
+font-weight: 600;
+cursor: pointer;
+transition: var(--transition);
+text-align: center;
+border: none;
+text-decoration: none;
+}
+
+.btn i {
+font-size: 0.9rem;
+}
+
+.btn-primary {
+background: linear-gradient(135deg, var(--primary), var(--primary-light));
+color: white;
+box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 10px rgba(99, 102, 241, 0.4);
+}
+
+.btn-outline {
+background: transparent;
+color: var(--primary);
+border: 1px solid var(--primary);
+}
+
+.btn-outline:hover {
+background: var(--primary);
+color: white;
+}
+
+.btn-premium {
+background: linear-gradient(135deg, var(--premium), #ea580c);
+color: white;
+box-shadow: 0 4px 6px rgba(249, 115, 22, 0.3);
+}
+
+.btn-premium:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 10px rgba(249, 115, 22, 0.4);
+}
+
+/* Hero Section */
+.hero {
+padding: 6rem 0 4rem;
+position: relative;
+overflow: hidden;
+}
+
+.hero::before {
+content: '';
+position: absolute;
+top: -50%;
+right: -20%;
+width: 800px;
+height: 800px;
+background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0) 70%);
+z-index: -1;
+}
+
+.hero-content {
+max-width: 600px;
+text-align: center;
+margin: 0 auto;
+}
+
+.hero h1 {
+font-size: 3.5rem;
+font-weight: 800;
+line-height: 1.1;
+margin-bottom: 1.5rem;
+background: linear-gradient(135deg, var(--dark), var(--primary));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.hero p {
+font-size: 1.25rem;
+color: var(--gray);
+margin-bottom: 2.5rem;
+}
+
+.hero-buttons {
+display: flex;
+gap: 1rem;
+justify-content: center;
+flex-wrap: wrap;
+}
+
+/* Main App */
+.app-section {
+padding: 4rem 0;
+}
+
+.section-header {
+text-align: center;
+margin-bottom: 3rem;
+}
+
+.section-header h2 {
+font-size: 2.5rem;
+font-weight: 700;
+margin-bottom: 1rem;
+color: var(--dark);
+}
+
+.section-header p {
+font-size: 1.125rem;
+color: var(--gray);
+max-width: 600px;
+margin: 0 auto;
+}
+
+.tabs {
+display: flex;
+justify-content: center;
+margin-bottom: 3rem;
+background: white;
+border-radius: var(--border-radius-lg);
+padding: 0.5rem;
+box-shadow: var(--shadow);
+max-width: 500px;
+margin-left: auto;
+margin-right: auto;
+}
+
+.tab {
+flex: 1;
+padding: 1rem 1.5rem;
+background: none;
+border: none;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+transition: var(--transition);
+border-radius: var(--border-radius);
+color: var(--gray);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+
+.tab.active {
+background: var(--primary);
+color: white;
+box-shadow: var(--shadow);
+}
+
+.tab-content {
+display: none;
+}
+
+.tab-content.active {
+display: block;
+animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.app-container {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 2rem;
+}
+
+.input-card, .preview-card {
+background: white;
+border-radius: var(--border-radius-lg);
+box-shadow: var(--shadow);
+overflow: hidden;
+transition: var(--transition);
+}
+
+.input-card:hover, .preview-card:hover {
+transform: translateY(-5px);
+box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+padding: 1.5rem 2rem;
+border-bottom: 1px solid var(--gray-light);
+background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+.card-header h3 {
+font-size: 1.5rem;
+font-weight: 600;
+color: var(--dark);
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.card-header h3 i {
+color: var(--primary);
+}
+
+.card-body {
+padding: 2rem;
+}
+
+.form-group {
+margin-bottom: 1.5rem;
+}
+
+label {
+display: block;
+margin-bottom: 0.5rem;
+font-weight: 600;
+color: var(--dark);
+}
+
+input, select, textarea {
+width: 100%;
+padding: 0.875rem 1rem;
+border: 1px solid var(--gray-light);
+border-radius: var(--border-radius);
+font-size: 1rem;
+transition: var(--transition);
+background: white;
+}
+
+input:focus, select:focus, textarea:focus {
+outline: none;
+border-color: var(--primary);
+box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+textarea {
+min-height: 120px;
+resize: vertical;
+}
+
+.color-options {
+display: flex;
+gap: 1rem;
+}
+
+.color-input {
+flex: 1;
+}
+
+.color-input input {
+height: 50px;
+padding: 0.25rem;
+}
+
+.btn-generate {
+width: 100%;
+padding: 1rem;
+font-size: 1.1rem;
+margin-top: 1rem;
+}
+
+.preview-container {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 2rem;
+min-height: 400px;
+}
+
+.qr-container, .barcode-container {
+width: 250px;
+height: 250px;
+margin: 1rem 0;
+border: 1px solid var(--gray-light);
+border-radius: var(--border-radius);
+display: flex;
+align-items: center;
+justify-content: center;
+background: white;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.barcode-container {
+height: 150px;
+}
+
+#qrcode, #barcode {
+padding: 10px;
+}
+
+.business-card-preview {
+width: 100%;
+max-width: 380px;
+height: 220px;
+background: white;
+border-radius: var(--border-radius);
+box-shadow: var(--shadow);
+padding: 1.5rem;
+margin: 1rem 0;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+color: white;
+position: relative;
+overflow: hidden;
+}
+
+.business-card-preview::before {
+content: '';
+position: absolute;
+top: -50%;
+right: -50%;
+width: 100%;
+height: 200%;
+background: rgba(255, 255, 255, 0.1);
+transform: rotate(30deg);
+}
+
+.card-header-preview {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+position: relative;
+z-index: 1;
+}
+
+.card-logo {
+width: 50px;
+height: 50px;
+background: rgba(255, 255, 255, 0.2);
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-weight: bold;
+backdrop-filter: blur(10px);
+}
+
+.card-name {
+font-size: 1.3rem;
+font-weight: bold;
+margin-bottom: 0.25rem;
+}
+
+.card-title {
+font-size: 0.9rem;
+opacity: 0.9;
+}
+
+.card-contact {
+display: flex;
+flex-direction: column;
+gap: 0.3rem;
+position: relative;
+z-index: 1;
+}
+
+.card-contact div {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+font-size: 0.9rem;
+}
+
+.btn-download {
+width: 100%;
+padding: 1rem;
+margin-top: 1rem;
+font-size: 1.1rem;
+}
+
+.premium-badge {
+background: linear-gradient(135deg, var(--premium), #ea580c);
+color: white;
+font-size: 0.7rem;
+padding: 0.3rem 0.7rem;
+border-radius: 20px;
+margin-left: 0.5rem;
+vertical-align: middle;
+}
+
+.premium-feature {
+position: relative;
+}
+
+.premium-overlay {
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(255, 255, 255, 0.9);
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: var(--border-radius);
+flex-direction: column;
+gap: 1rem;
+backdrop-filter: blur(5px);
+}
+
+.premium-overlay p {
+font-weight: 600;
+color: var(--dark);
+}
+
+/* Features Section */
+.features {
+padding: 6rem 0;
+background: white;
+}
+
+.features-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 2rem;
+margin-top: 3rem;
+}
+
+.feature-card {
+background: white;
+border-radius: var(--border-radius-lg);
+padding: 2rem;
+box-shadow: var(--shadow);
+transition: var(--transition);
+text-align: center;
+}
+
+.feature-card:hover {
+transform: translateY(-10px);
+box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+width: 70px;
+height: 70px;
+background: linear-gradient(135deg, var(--primary), var(--primary-light));
+border-radius: 20px;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 0 auto 1.5rem;
+color: white;
+font-size: 1.8rem;
+}
+
+.feature-card h3 {
+font-size: 1.5rem;
+font-weight: 600;
+margin-bottom: 1rem;
+color: var(--dark);
+}
+
+.feature-card p {
+color: var(--gray);
+}
+
+/* Pricing Section */
+.pricing {
+padding: 6rem 0;
+background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
+}
+
+.pricing-cards {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 2rem;
+margin-top: 3rem;
+}
+
+.pricing-card {
+background: white;
+border-radius: var(--border-radius-lg);
+box-shadow: var(--shadow);
+padding: 2.5rem;
+transition: var(--transition);
+position: relative;
+border: 1px solid var(--gray-light);
+}
+
+.pricing-card:hover {
+transform: translateY(-10px);
+box-shadow: var(--shadow-lg);
+}
+
+.pricing-card.popular {
+border-color: var(--primary);
+transform: scale(1.05);
+}
+
+.pricing-card.popular:hover {
+transform: scale(1.05) translateY(-10px);
+}
+
+.popular-badge {
+position: absolute;
+top: -12px;
+left: 50%;
+transform: translateX(-50%);
+background: linear-gradient(135deg, var(--primary), var(--primary-light));
+color: white;
+padding: 0.5rem 1.5rem;
+border-radius: 20px;
+font-weight: 600;
+font-size: 0.9rem;
+}
+
+.pricing-card h3 {
+font-size: 1.5rem;
+font-weight: 600;
+margin-bottom: 1rem;
+color: var(--dark);
+}
+
+.price {
+font-size: 3rem;
+font-weight: 700;
+margin-bottom: 1.5rem;
+color: var(--dark);
+}
+
+.price .period {
+font-size: 1rem;
+color: var(--gray);
+}
+
+.pricing-features {
+list-style: none;
+margin-bottom: 2rem;
+}
+
+.pricing-features li {
+margin-bottom: 1rem;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.pricing-features li:before {
+content: "✓";
+color: var(--secondary);
+font-weight: bold;
+}
+
+.pricing-card .btn {
+width: 100%;
+justify-content: center;
+}
+
+/* Footer */
+footer {
+background: var(--dark);
+color: white;
+padding: 4rem 0 2rem;
+}
+
+.footer-content {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 3rem;
+margin-bottom: 3rem;
+}
+
+.footer-column h3 {
+margin-bottom: 1.5rem;
+font-size: 1.2rem;
+color: white;
+}
+
+.footer-links {
+list-style: none;
+}
+
+.footer-links li {
+margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+color: #cbd5e1;
+text-decoration: none;
+transition: var(--transition);
+}
+
+.footer-links a:hover {
+color: white;
+}
+
+.social-links {
+display: flex;
+gap: 1rem;
+margin-top: 1rem;
+}
+
+.social-links a {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+background: rgba(255, 255, 255, 0.1);
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+transition: var(--transition);
+}
+
+.social-links a:hover {
+background: var(--primary);
+transform: translateY(-3px);
+}
+
+.copyright {
+text-align: center;
+padding-top: 2rem;
+border-top: 1px solid #334155;
+color: #94a3b8;
+}
+
+/* Modal */
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.5);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+backdrop-filter: blur(5px);
+}
+
+.modal.active {
+display: flex;
+}
+
+.modal-content {
+background: white;
+border-radius: var(--border-radius-lg);
+padding: 2rem;
+max-width: 500px;
+width: 90%;
+max-height: 90vh;
+overflow-y: auto;
+box-shadow: var(--shadow-lg);
+animation: modalAppear 0.3s ease;
+}
+
+@keyframes modalAppear {
+from { opacity: 0; transform: scale(0.9); }
+to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 1.5rem;
+}
+
+.modal-title {
+font-size: 1.5rem;
+font-weight: 700;
+}
+
+.close-modal {
+background: none;
+border: none;
+font-size: 1.5rem;
+cursor: pointer;
+color: var(--gray);
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+.app-container {
+grid-template-columns: 1fr;
+}
+
+.hero h1 {
+font-size: 2.8rem;
+}
+
+.pricing-card.popular {
+transform: none;
+}
+
+.pricing-card.popular:hover {
+transform: translateY(-10px);
+}
+}
+
+@media (max-width: 768px) {
+.navbar {
+flex-direction: column;
+gap: 1rem;
+}
+
+.nav-links {
+flex-wrap: wrap;
+justify-content: center;
+}
+
+.hero h1 {
+font-size: 2.2rem;
+}
+
+.hero p {
+font-size: 1.1rem;
+}
+
+.tabs {
+flex-direction: column;
+}
+}
+</style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <div class="logo">
-                    <span class="logo-icon">⚡</span>
-                    <span>CodeGen Pro</span>
-                </div>
-                <div class="nav-links">
-                    <a href="#features">Features</a>
-                    <a href="#pricing">Pricing</a>
-                    <a href="#about">About</a>
-                </div>
-                <div class="auth-buttons">
-                    <button class="btn btn-outline" id="login-btn">Log In</button>
-                    <button class="btn btn-primary" id="signup-btn">Sign Up</button>
-                    <div class="user-menu" id="user-menu" style="display: none;">
-                        <span id="user-email"></span>
-                        <button class="btn btn-outline" id="logout-btn">Logout</button>
-                    </div>
-                </div>
-            </nav>
-        </div>
-    </header>
+<!-- Header -->
+<header>
+<div class="container">
+<nav class="navbar">
+<a href="#" class="logo">
+<div class="logo-icon">CG</div>
+<span>CodeGen Pro</span>
+</a>
+<div class="nav-links">
+<a href="#features">Features</a>
+<a href="#pricing">Pricing</a>
+<a href="#about">About</a>
+</div>
+<div class="auth-buttons">
+<button class="btn btn-outline" id="login-btn">
+<i class="fas fa-sign-in-alt"></i> Log In
+</button>
+<button class="btn btn-primary" id="signup-btn">
+<i class="fas fa-user-plus"></i> Sign Up
+</button>
+<div class="user-menu" id="user-menu" style="display: none;">
+<div class="user-avatar" id="user-avatar">JD</div>
+<button class="btn btn-outline" id="logout-btn">
+<i class="fas fa-sign-out-alt"></i> Logout
+</button>
+</div>
+</div>
+</nav>
+</div>
+</header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Generate QR Codes, Barcodes & Business Cards</h1>
-            <p>Create professional codes and cards in seconds. Free for basic use, upgrade for advanced features.</p>
-            <div>
-                <button class="btn btn-primary" style="padding: 0.8rem 1.5rem; margin-right: 1rem;" id="get-started-btn">Get Started Free</button>
-                <button class="btn btn-premium" style="padding: 0.8rem 1.5rem;" id="upgrade-hero-btn">Upgrade to Pro</button>
-            </div>
-        </div>
-    </section>
+<!-- Hero Section -->
+<section class="hero">
+<div class="container">
+<div class="hero-content">
+<h1>Create Professional QR Codes, Barcodes & Business Cards</h1>
+<p>Generate stunning codes and cards in seconds. Free for basic use, unlock advanced features with our Pro plan.</p>
+<div class="hero-buttons">
+<button class="btn btn-primary" id="get-started-btn">
+<i class="fas fa-rocket"></i> Get Started Free
+</button>
+<button class="btn btn-premium" id="upgrade-hero-btn">
+<i class="fas fa-crown"></i> Upgrade to Pro
+</button>
+</div>
+</div>
+</div>
+</section>
 
-    <!-- Main App -->
-    <div class="container">
-        <div class="tabs">
-            <button class="tab active" data-tab="qr">QR Code</button>
-            <button class="tab" data-tab="barcode">Barcode</button>
-            <button class="tab" data-tab="business-card">Business Card</button>
-        </div>
+<!-- Main App -->
+<section class="app-section">
+<div class="container">
+<div class="section-header">
+<h2>Generate & Customize</h2>
+<p>Create professional QR codes, barcodes, and digital business cards with our easy-to-use tools</p>
+</div>
 
-        <!-- QR Code Tab -->
-        <div id="qr-tab" class="tab-content active">
-            <div class="main-content">
-                <section class="input-section">
-                    <h2>Create Your QR Code</h2>
-                    <p>Free features with optional premium upgrades</p>
+<div class="tabs">
+<button class="tab active" data-tab="qr">
+<i class="fas fa-qrcode"></i> QR Code
+</button>
+<button class="tab" data-tab="barcode">
+<i class="fas fa-barcode"></i> Barcode
+</button>
+<button class="tab" data-tab="business-card">
+<i class="fas fa-id-card"></i> Business Card
+</button>
+</div>
 
-                    <div class="form-group">
-                        <label for="qr-content">Content Type</label>
-                        <select id="qr-type">
-                            <option value="url">Website URL</option>
-                            <option value="text">Plain Text</option>
-                            <option value="email">Email</option>
-                            <option value="phone">Phone Number</option>
-                            <option value="wifi">WiFi Network</option>
-                            <option value="vcard">Contact (vCard)</option>
-                        </select>
-                    </div>
+<!-- QR Code Tab -->
+<div id="qr-tab" class="tab-content active">
+<div class="app-container">
+<div class="input-card">
+<div class="card-header">
+<h3><i class="fas fa-cog"></i> QR Code Settings</h3>
+</div>
+<div class="card-body">
+<div class="form-group">
+<label for="qr-content">Content Type</label>
+<select id="qr-type">
+<option value="url">Website URL</option>
+<option value="text">Plain Text</option>
+<option value="email">Email</option>
+<option value="phone">Phone Number</option>
+<option value="wifi">WiFi Network</option>
+<option value="vcard">Contact (vCard)</option>
+</select>
+</div>
 
-                    <div class="form-group">
-                        <label for="qr-content" id="content-label">Website URL</label>
-                        <input type="text" id="qr-content" placeholder="https://example.com">
-                    </div>
+<div class="form-group">
+<label for="qr-content" id="content-label">Website URL</label>
+<input type="text" id="qr-content" placeholder="https://example.com">
+</div>
 
-                    <div class="form-group">
-                        <label>Customize Appearance <span class="premium-badge">PRO</span></label>
-                        <div class="color-options premium-feature">
-                            <div class="color-input">
-                                <label for="qr-color">QR Color</label>
-                                <input type="color" id="qr-color" value="#000000" disabled>
-                            </div>
-                            <div class="color-input">
-                                <label for="qr-bg">Background</label>
-                                <input type="color" id="qr-bg" value="#ffffff" disabled>
-                            </div>
-                            <div class="premium-overlay">
-                                <p>Premium Feature</p>
-                                <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
-                            </div>
-                        </div>
-                    </div>
+<div class="form-group">
+<label>Customize Appearance <span class="premium-badge">PRO</span></label>
+<div class="color-options premium-feature">
+<div class="color-input">
+<label for="qr-color">QR Color</label>
+<input type="color" id="qr-color" value="#000000" disabled>
+</div>
+<div class="color-input">
+<label for="qr-bg">Background</label>
+<input type="color" id="qr-bg" value="#ffffff" disabled>
+</div>
+<div class="premium-overlay">
+<p>Premium Feature</p>
+<button class="btn btn-premium upgrade-btn">
+<i class="fas fa-crown"></i> Upgrade to Pro
+</button>
+</div>
+</div>
+</div>
 
-                    <div class="form-group">
-                        <label for="qr-size">Size</label>
-                        <select id="qr-size">
-                            <option value="200">Small (200x200)</option>
-                            <option value="300" selected>Medium (300x300)</option>
-                            <option value="400">Large (400x400)</option>
-                        </select>
-                    </div>
+<div class="form-group">
+<label for="qr-size">Size</label>
+<select id="qr-size">
+<option value="200">Small (200x200)</option>
+<option value="300" selected>Medium (300x300)</option>
+<option value="400">Large (400x400)</option>
+</select>
+</div>
 
-                    <div class="form-group premium-feature">
-                        <label for="qr-logo">Add Logo <span class="premium-badge">PRO</span></label>
-                        <input type="file" id="qr-logo" accept="image/*" disabled>
-                        <div class="premium-overlay">
-                            <p>Premium Feature</p>
-                            <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
-                        </div>
-                    </div>
+<div class="form-group premium-feature">
+<label for="qr-logo">Add Logo <span class="premium-badge">PRO</span></label>
+<input type="file" id="qr-logo" accept="image/*" disabled>
+<div class="premium-overlay">
+<p>Premium Feature</p>
+<button class="btn btn-premium upgrade-btn">
+<i class="fas fa-crown"></i> Upgrade to Pro
+</button>
+</div>
+</div>
 
-                    <button id="generate-qr-btn" class="btn btn-primary">Generate QR Code</button>
-                    <button id="save-qr-btn" class="btn btn-outline" style="margin-top: 0.5rem; display: none;">Save to Account</button>
-                </section>
+<button id="generate-qr-btn" class="btn btn-primary btn-generate">
+<i class="fas fa-bolt"></i> Generate QR Code
+</button>
+<button id="save-qr-btn" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%; display: none;">
+<i class="fas fa-save"></i> Save to Account
+</button>
+</div>
+</div>
 
-                <section class="preview-section">
-                    <h2>Your QR Code</h2>
-                    <p>Preview and download your QR code</p>
+<div class="preview-card">
+<div class="card-header">
+<h3><i class="fas fa-eye"></i> QR Code Preview</h3>
+</div>
+<div class="preview-container">
+<div class="qr-container">
+<div id="qrcode"></div>
+</div>
+<p class="qr-info">Your QR code will appear here</p>
+<button id="download-qr-btn" class="btn btn-download" disabled>
+<i class="fas fa-download"></i> Download QR Code
+</button>
+<button class="btn btn-premium" style="margin-top: 0.5rem; width: 100%;">
+<i class="fas fa-crown"></i> Download High-Res (PRO)
+</button>
+</div>
+</div>
+</div>
+</div>
 
-                    <div class="qr-container">
-                        <div id="qrcode"></div>
-                    </div>
+<!-- Barcode Tab -->
+<div id="barcode-tab" class="tab-content">
+<div class="app-container">
+<div class="input-card">
+<div class="card-header">
+<h3><i class="fas fa-cog"></i> Barcode Settings</h3>
+</div>
+<div class="card-body">
+<div class="form-group">
+<label for="barcode-type">Barcode Type</label>
+<select id="barcode-type">
+<option value="CODE128">CODE128</option>
+<option value="EAN13">EAN-13</option>
+<option value="UPC">UPC</option>
+<option value="CODE39">CODE39</option>
+<option value="ITF14">ITF-14</option>
+</select>
+</div>
 
-                    <p class="qr-info">Your QR code will appear here</p>
+<div class="form-group">
+<label for="barcode-content">Barcode Data</label>
+<input type="text" id="barcode-content" placeholder="Enter barcode data">
+</div>
 
-                    <button id="download-qr-btn" class="btn btn-download" disabled>Download QR Code</button>
-                    <button class="btn btn-premium" style="margin-top: 0.5rem; width: 100%;">Download High-Res (PRO)</button>
-                </section>
-            </div>
-        </div>
+<div class="form-group">
+<label for="barcode-width">Width: <span id="width-value">2</span></label>
+<input type="range" id="barcode-width" min="1" max="4" step="0.5" value="2">
+</div>
 
-        <!-- Barcode Tab -->
-        <div id="barcode-tab" class="tab-content">
-            <div class="main-content">
-                <section class="input-section">
-                    <h2>Create Your Barcode</h2>
-                    <p>Generate barcodes for products, inventory, or tracking</p>
+<div class="form-group">
+<label for="barcode-height">Height: <span id="height-value">50</span></label>
+<input type="range" id="barcode-height" min="20" max="100" value="50">
+</div>
 
-                    <div class="form-group">
-                        <label for="barcode-type">Barcode Type</label>
-                        <select id="barcode-type">
-                            <option value="CODE128">CODE128</option>
-                            <option value="EAN13">EAN-13</option>
-                            <option value="UPC">UPC</option>
-                            <option value="CODE39">CODE39</option>
-                            <option value="ITF14">ITF-14</option>
-                        </select>
-                    </div>
+<div class="form-group">
+<label for="barcode-text">Display Text</label>
+<select id="barcode-text">
+<option value="true">Show Text</option>
+<option value="false">Hide Text</option>
+</select>
+</div>
 
-                    <div class="form-group">
-                        <label for="barcode-content">Barcode Data</label>
-                        <input type="text" id="barcode-content" placeholder="Enter barcode data">
-                    </div>
+<div class="form-group premium-feature">
+<label for="barcode-color">Custom Color <span class="premium-badge">PRO</span></label>
+<input type="color" id="barcode-color" value="#000000" disabled>
+<div class="premium-overlay">
+<p>Premium Feature</p>
+<button class="btn btn-premium upgrade-btn">
+<i class="fas fa-crown"></i> Upgrade to Pro
+</button>
+</div>
+</div>
 
-                    <div class="form-group">
-                        <label for="barcode-width">Width</label>
-                        <input type="range" id="barcode-width" min="1" max="4" step="0.5" value="2">
-                        <span id="width-value">2</span>
-                    </div>
+<button id="generate-barcode-btn" class="btn btn-primary btn-generate">
+<i class="fas fa-bolt"></i> Generate Barcode
+</button>
+<button id="save-barcode-btn" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%; display: none;">
+<i class="fas fa-save"></i> Save to Account
+</button>
+</div>
+</div>
 
-                    <div class="form-group">
-                        <label for="barcode-height">Height</label>
-                        <input type="range" id="barcode-height" min="20" max="100" value="50">
-                        <span id="height-value">50</span>
-                    </div>
+<div class="preview-card">
+<div class="card-header">
+<h3><i class="fas fa-eye"></i> Barcode Preview</h3>
+</div>
+<div class="preview-container">
+<div class="barcode-container">
+<svg id="barcode"></svg>
+</div>
+<p class="barcode-info">Your barcode will appear here</p>
+<button id="download-barcode-btn" class="btn btn-download" disabled>
+<i class="fas fa-download"></i> Download Barcode
+</button>
+<button class="btn btn-premium" style="margin-top: 0.5rem; width: 100%;">
+<i class="fas fa-crown"></i> Download Vector (PRO)
+</button>
+</div>
+</div>
+</div>
+</div>
 
-                    <div class="form-group">
-                        <label for="barcode-text">Display Text</label>
-                        <select id="barcode-text">
-                            <option value="true">Show Text</option>
-                            <option value="false">Hide Text</option>
-                        </select>
-                    </div>
+<!-- Business Card Tab -->
+<div id="business-card-tab" class="tab-content">
+<div class="app-container">
+<div class="input-card">
+<div class="card-header">
+<h3><i class="fas fa-cog"></i> Business Card Settings</h3>
+</div>
+<div class="card-body">
+<div class="form-group">
+<label for="card-name">Full Name</label>
+<input type="text" id="card-name" placeholder="John Doe">
+</div>
 
-                    <div class="form-group premium-feature">
-                        <label for="barcode-color">Custom Color <span class="premium-badge">PRO</span></label>
-                        <input type="color" id="barcode-color" value="#000000" disabled>
-                        <div class="premium-overlay">
-                            <p>Premium Feature</p>
-                            <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
-                        </div>
-                    </div>
+<div class="form-group">
+<label for="card-title">Job Title</label>
+<input type="text" id="card-title" placeholder="Marketing Manager">
+</div>
 
-                    <button id="generate-barcode-btn" class="btn btn-primary">Generate Barcode</button>
-                    <button id="save-barcode-btn" class="btn btn-outline" style="margin-top: 0.5rem; display: none;">Save to Account</button>
-                </section>
+<div class="form-group">
+<label for="card-company">Company</label>
+<input type="text" id="card-company" placeholder="Your Company">
+</div>
 
-                <section class="preview-section">
-                    <h2>Your Barcode</h2>
-                    <p>Preview and download your barcode</p>
+<div class="form-group">
+<label for="card-email">Email</label>
+<input type="email" id="card-email" placeholder="john@example.com">
+</div>
 
-                    <div class="barcode-container">
-                        <svg id="barcode"></svg>
-                    </div>
+<div class="form-group">
+<label for="card-phone">Phone</label>
+<input type="tel" id="card-phone" placeholder="+1 (123) 456-7890">
+</div>
 
-                    <p class="barcode-info">Your barcode will appear here</p>
+<div class="form-group">
+<label for="card-website">Website</label>
+<input type="url" id="card-website" placeholder="https://example.com">
+</div>
 
-                    <button id="download-barcode-btn" class="btn btn-download" disabled>Download Barcode</button>
-                    <button class="btn btn-premium" style="margin-top: 0.5rem; width: 100%;">Download Vector (PRO)</button>
-                </section>
-            </div>
-        </div>
+<div class="form-group premium-feature">
+<label for="card-logo">Upload Logo <span class="premium-badge">PRO</span></label>
+<input type="file" id="card-logo" accept="image/*" disabled>
+<div class="premium-overlay">
+<p>Premium Feature</p>
+<button class="btn btn-premium upgrade-btn">
+<i class="fas fa-crown"></i> Upgrade to Pro
+</button>
+</div>
+</div>
 
-        <!-- Business Card Tab -->
-        <div id="business-card-tab" class="tab-content">
-            <div class="main-content">
-                <section class="input-section">
-                    <h2>Create Your Business Card</h2>
-                    <p>Design a professional digital business card</p>
+<div class="form-group premium-feature">
+<label for="card-template">Premium Templates <span class="premium-badge">PRO</span></label>
+<select id="card-template" disabled>
+<option value="default">Default</option>
+<option value="modern">Modern</option>
+<option value="elegant">Elegant</option>
+<option value="creative">Creative</option>
+</select>
+<div class="premium-overlay">
+<p>Premium Feature</p>
+<button class="btn btn-premium upgrade-btn">
+<i class="fas fa-crown"></i> Upgrade to Pro
+</button>
+</div>
+</div>
 
-                    <div class="form-group">
-                        <label for="card-name">Full Name</label>
-                        <input type="text" id="card-name" placeholder="John Doe">
-                    </div>
+<button id="generate-card-btn" class="btn btn-primary btn-generate">
+<i class="fas fa-bolt"></i> Generate Business Card
+</button>
+<button id="save-card-btn" class="btn btn-outline" style="margin-top: 0.5rem; width: 100%; display: none;">
+<i class="fas fa-save"></i> Save to Account
+</button>
+</div>
+</div>
 
-                    <div class="form-group">
-                        <label for="card-title">Job Title</label>
-                        <input type="text" id="card-title" placeholder="Marketing Manager">
-                    </div>
+<div class="preview-card">
+<div class="card-header">
+<h3><i class="fas fa-eye"></i> Business Card Preview</h3>
+</div>
+<div class="preview-container">
+<div class="business-card-preview" id="business-card">
+<div class="card-header-preview">
+<div>
+<div class="card-name" id="preview-name">John Doe</div>
+<div class="card-title" id="preview-title">Marketing Manager</div>
+<div class="card-company" id="preview-company">Your Company</div>
+</div>
+<div class="card-logo">LOGO</div>
+</div>
 
-                    <div class="form-group">
-                        <label for="card-company">Company</label>
-                        <input type="text" id="card-company" placeholder="Your Company">
-                    </div>
+<div class="card-contact">
+<div id="preview-email">✉️ john@example.com</div>
+<div id="preview-phone">📞 +1 (123) 456-7890</div>
+<div id="preview-website">🌐 https://example.com</div>
+</div>
+</div>
 
-                    <div class="form-group">
-                        <label for="card-email">Email</label>
-                        <input type="email" id="card-email" placeholder="john@example.com">
-                    </div>
+<button id="download-card-btn" class="btn btn-download">
+<i class="fas fa-download"></i> Download Business Card
+</button>
+<button id="download-vcard-btn" class="btn btn-premium" style="margin-top: 0.5rem; width: 100%;">
+<i class="fas fa-crown"></i> Download vCard (PRO)
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-                    <div class="form-group">
-                        <label for="card-phone">Phone</label>
-                        <input type="tel" id="card-phone" placeholder="+1 (123) 456-7890">
-                    </div>
+<!-- Features Section -->
+<section class="features" id="features">
+<div class="container">
+<div class="section-header">
+<h2>Powerful Features</h2>
+<p>Everything you need to create professional codes and cards for your business</p>
+</div>
+<div class="features-grid">
+<div class="feature-card">
+<div class="feature-icon">
+<i class="fas fa-qrcode"></i>
+</div>
+<h3>QR Code Generator</h3>
+<p>Create custom QR codes for websites, contact info, WiFi networks, and more with advanced customization options.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">
+<i class="fas fa-barcode"></i>
+</div>
+<h3>Barcode Creator</h3>
+<p>Generate barcodes in multiple formats for products, inventory, tickets, and tracking purposes.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">
+<i class="fas fa-id-card"></i>
+</div>
+<h3>Business Cards</h3>
+<p>Design professional digital business cards with multiple templates and customization options.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">
+<i class="fas fa-palette"></i>
+</div>
+<h3>Customization</h3>
+<p>Customize colors, sizes, and styles to match your brand identity and design preferences.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">
+<i class="fas fa-cloud-download-alt"></i>
+</div>
+<h3>High-Quality Downloads</h3>
+<p>Download your creations in high-resolution PNG, SVG, or PDF formats for professional use.</p>
+</div>
+<div class="feature-card">
+<div class="feature-icon">
+<i class="fas fa-shield-alt"></i>
+</div>
+<h3>Secure & Private</h3>
+<p>Your data is safe with us. We don't store sensitive information and ensure complete privacy.</p>
+</div>
+</div>
+</div>
+</section>
 
-                    <div class="form-group">
-                        <label for="card-website">Website</label>
-                        <input type="url" id="card-website" placeholder="https://example.com">
-                    </div>
+<!-- Pricing Section -->
+<section class="pricing" id="pricing">
+<div class="container">
+<div class="section-header">
+<h2>Simple, Transparent Pricing</h2>
+<p>Choose the plan that works best for you. All plans include core features with no hidden fees.</p>
+</div>
+<div class="pricing-cards">
+<div class="pricing-card">
+<h3>Free</h3>
+<div class="price">$0 <span class="period">/ forever</span></div>
+<ul class="pricing-features">
+<li>Basic QR Code Generation</li>
+<li>Standard Barcode Creation</li>
+<li>Simple Business Card Design</li>
+<li>Standard Resolution Downloads</li>
+<li>5 Downloads per Month</li>
+<li>Save up to 10 creations</li>
+</ul>
+<button class="btn btn-outline" id="free-plan-btn">
+Get Started
+</button>
+</div>
 
-                    <div class="form-group premium-feature">
-                        <label for="card-logo">Upload Logo <span class="premium-badge">PRO</span></label>
-                        <input type="file" id="card-logo" accept="image/*" disabled>
-                        <div class="premium-overlay">
-                            <p>Premium Feature</p>
-                            <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
-                        </div>
-                    </div>
+<div class="pricing-card popular">
+<div class="popular-badge">MOST POPULAR</div>
+<h3>Pro</h3>
+<div class="price">$9 <span class="period">/ month</span></div>
+<ul class="pricing-features">
+<li>All Free Features</li>
+<li>Custom QR Code Colors & Logo</li>
+<li>Advanced Barcode Formats</li>
+<li>Premium Business Card Templates</li>
+<li>High-Resolution & Vector Downloads</li>
+<li>Unlimited Downloads</li>
+<li>Unlimited saved creations</li>
+<li>Priority Support</li>
+</ul>
+<button class="btn btn-premium" id="pro-plan-btn">
+Upgrade to Pro
+</button>
+</div>
 
-                    <div class="form-group premium-feature">
-                        <label for="card-template">Premium Templates <span class="premium-badge">PRO</span></label>
-                        <select id="card-template" disabled>
-                            <option value="default">Default</option>
-                            <option value="modern">Modern</option>
-                            <option value="elegant">Elegant</option>
-                            <option value="creative">Creative</option>
-                        </select>
-                        <div class="premium-overlay">
-                            <p>Premium Feature</p>
-                            <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
-                        </div>
-                    </div>
+<div class="pricing-card">
+<h3>Team</h3>
+<div class="price">$29 <span class="period">/ month</span></div>
+<ul class="pricing-features">
+<li>All Pro Features</li>
+<li>Up to 5 Team Members</li>
+<li>Brand Kit Management</li>
+<li>API Access</li>
+<li>Bulk Generation</li>
+<li>Advanced Analytics</li>
+<li>Dedicated Account Manager</li>
+</ul>
+<button class="btn btn-outline" id="team-plan-btn">
+Contact Sales
+</button>
+</div>
+</div>
+</div>
+</section>
 
-                    <button id="generate-card-btn" class="btn btn-primary">Generate Business Card</button>
-                    <button id="save-card-btn" class="btn btn-outline" style="margin-top: 0.5rem; display: none;">Save to Account</button>
-                </section>
+<!-- Footer -->
+<footer>
+<div class="container">
+<div class="footer-content">
+<div class="footer-column">
+<h3>CodeGen Pro</h3>
+<p>Create professional QR codes, barcodes, and business cards in seconds.</p>
+<div class="social-links">
+<a href="#"><i class="fab fa-twitter"></i></a>
+<a href="#"><i class="fab fa-facebook-f"></i></a>
+<a href="#"><i class="fab fa-instagram"></i></a>
+<a href="#"><i class="fab fa-linkedin-in"></i></a>
+</div>
+</div>
+<div class="footer-column">
+<h3>Product</h3>
+<ul class="footer-links">
+<li><a href="#">Features</a></li>
+<li><a href="#">Pricing</a></li>
+<li><a href="#">Use Cases</a></li>
+<li><a href="#">API</a></li>
+</ul>
+</div>
+<div class="footer-column">
+<h3>Resources</h3>
+<ul class="footer-links">
+<li><a href="#">Documentation</a></li>
+<li><a href="#">Blog</a></li>
+<li><a href="#">Support</a></li>
+<li><a href="#">FAQ</a></li>
+</ul>
+</div>
+<div class="footer-column">
+<h3>Company</h3>
+<ul class="footer-links">
+<li><a href="#">About Us</a></li>
+<li><a href="#">Careers</a></li>
+<li><a href="#">Contact</a></li>
+<li><a href="#">Privacy Policy</a></li>
+</ul>
+</div>
+</div>
+<div class="copyright">
+<p>&copy; 2023 CodeGen Pro. All rights reserved.</p>
+</div>
+</div>
+</footer>
 
-                <section class="preview-section">
-                    <h2>Your Business Card</h2>
-                    <p>Preview and download your digital business card</p>
+<!-- Auth Modal -->
+<div class="modal" id="auth-modal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title" id="auth-modal-title">Sign Up</h2>
+<button class="close-modal">&times;</button>
+</div>
+<form id="auth-form">
+<div class="form-group">
+<label for="auth-email">Email</label>
+<input type="email" id="auth-email" required>
+</div>
+<div class="form-group">
+<label for="auth-password">Password</label>
+<input type="password" id="auth-password" required>
+</div>
+<div class="form-group" id="confirm-password-group" style="display: none;">
+<label for="auth-confirm-password">Confirm Password</label>
+<input type="password" id="auth-confirm-password">
+</div>
+<button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" id="auth-submit-btn">
+Sign Up
+</button>
+</form>
+<p style="text-align: center; margin-top: 1rem;">
+<a href="#" id="auth-switch-link">Already have an account? Log in</a>
+</p>
+</div>
+</div>
 
-                    <div class="business-card-preview" id="business-card">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-name" id="preview-name">John Doe</div>
-                                <div class="card-title" id="preview-title">Marketing Manager</div>
-                                <div class="card-company" id="preview-company">Your Company</div>
-                            </div>
-                            <div class="card-logo">LOGO</div>
-                        </div>
+<!-- Upgrade Modal -->
+<div class="modal" id="upgrade-modal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title">Upgrade to Pro</h2>
+<button class="close-modal">&times;</button>
+</div>
+<p>Unlock all premium features with CodeGen Pro:</p>
+<ul class="pricing-features" style="margin: 1.5rem 0;">
+<li>Custom QR Code Colors & Logo</li>
+<li>Advanced Barcode Formats</li>
+<li>Premium Business Card Templates</li>
+<li>High-Resolution & Vector Downloads</li>
+<li>Unlimited Downloads</li>
+<li>Unlimited saved creations</li>
+<li>Priority Support</li>
+</ul>
+<p>Choose your plan:</p>
+<div style="display: flex; gap: 1rem; margin: 1.5rem 0;">
+<button class="btn btn-premium" style="flex: 1;" id="monthly-plan-btn">Monthly - $9/mo</button>
+<button class="btn btn-primary" style="flex: 1;" id="yearly-plan-btn">Yearly - $90/yr (Save $18)</button>
+</div>
+<p style="font-size: 0.9rem; color: #666;">No commitment. Cancel anytime.</p>
+</div>
+</div>
 
-                        <div class="card-contact">
-                            <div id="preview-email">✉️ john@example.com</div>
-                            <div id="preview-phone">📞 +1 (123) 456-7890</div>
-                            <div id="preview-website">🌐 https://example.com</div>
-                        </div>
-                    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// Tab functionality
+const tabs = document.querySelectorAll('.tab');
+const tabContents = document.querySelectorAll('.tab-content');
 
-                    <button id="download-card-btn" class="btn btn-download">Download Business Card</button>
-                    <button id="download-vcard-btn" class="btn btn-premium" style="margin-top: 0.5rem; width: 100%;">Download vCard (PRO)</button>
-                </section>
-            </div>
-        </div>
-    </div>
+tabs.forEach(tab => {
+tab.addEventListener('click', () => {
+const tabId = tab.getAttribute('data-tab');
 
-    <!-- My Creations Section (Logged in users) -->
-    <section id="my-creations" class="creations-section" style="display: none;">
-        <div class="container">
-            <h2>My Creations</h2>
-            <div class="creations-grid" id="creations-grid">
-                <!-- Dynamically populated with user's saved creations -->
-            </div>
-        </div>
-    </section>
+// Remove active class from all tabs and contents
+tabs.forEach(t => t.classList.remove('active'));
+tabContents.forEach(c => c.classList.remove('active'));
 
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
-        <div class="container">
-            <h2>Simple, Transparent Pricing</h2>
-            <div class="pricing-cards">
-                <div class="pricing-card">
-                    <h3>Free</h3>
-                    <div class="price">$0 <span class="period">/ forever</span></div>
-                    <ul class="pricing-features">
-                        <li>Basic QR Code Generation</li>
-                        <li>Standard Barcode Creation</li>
-                        <li>Simple Business Card Design</li>
-                        <li>Standard Resolution Downloads</li>
-                        <li>5 Downloads per Month</li>
-                        <li>Save up to 10 creations</li>
-                    </ul>
-                    <button class="btn btn-outline" style="width: 100%;" id="free-plan-btn">Get Started</button>
-                </div>
+// Add active class to current tab and content
+tab.classList.add('active');
+document.getElementById(`${tabId}-tab`).classList.add('active');
+});
+});
 
-                <div class="pricing-card popular">
-                    <div class="popular-badge">MOST POPULAR</div>
-                    <h3>Pro</h3>
-                    <div class="price">$9 <span class="period">/ month</span></div>
-                    <ul class="pricing-features">
-                        <li>All Free Features</li>
-                        <li>Custom QR Code Colors & Logo</li>
-                        <li>Advanced Barcode Formats</li>
-                        <li>Premium Business Card Templates</li>
-                        <li>High-Resolution & Vector Downloads</li>
-                        <li>Unlimited Downloads</li>
-                        <li>Unlimited saved creations</li>
-                        <li>Priority Support</li>
-                    </ul>
-                    <button class="btn btn-premium" style="width: 100%;" id="pro-plan-btn">Upgrade to Pro</button>
-                </div>
+// QR Code functionality
+const qrType = document.getElementById('qr-type');
+const contentLabel = document.getElementById('content-label');
+const qrContent = document.getElementById('qr-content');
+const qrSize = document.getElementById('qr-size');
+const generateQrBtn = document.getElementById('generate-qr-btn');
+const downloadQrBtn = document.getElementById('download-qr-btn');
+const qrCodeContainer = document.getElementById('qrcode');
+const qrInfo = document.querySelector('.qr-info');
 
-                <div class="pricing-card">
-                    <h3>Team</h3>
-                    <div class="price">$29 <span class="period">/ month</span></div>
-                    <ul class="pricing-features">
-                        <li>All Pro Features</li>
-                        <li>Up to 5 Team Members</li>
-                        <li>Brand Kit Management</li>
-                        <li>API Access</li>
-                        <li>Bulk Generation</li>
-                        <li>Advanced Analytics</li>
-                        <li>Dedicated Account Manager</li>
-                    </ul>
-                    <button class="btn btn-outline" style="width: 100%;" id="team-plan-btn">Contact Sales</button>
-                </div>
-            </div>
-        </div>
-    </section>
+// Update placeholder and label based on QR type
+qrType.addEventListener('change', function() {
+const type = this.value;
+let label = '';
+let placeholder = '';
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>CodeGen Pro</h3>
-                    <p>Create professional QR codes, barcodes, and business cards in seconds.</p>
-                </div>
-                <div class="footer-column">
-                    <h3>Product</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Use Cases</a></li>
-                        <li><a href="#">API</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Resources</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Support</a></li>
-                        <li><a href="#">FAQ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Company</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 CodeGen Pro. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+switch(type) {
+case 'url':
+label = 'Website URL';
+placeholder = 'https://example.com';
+break;
+case 'text':
+label = 'Text Content';
+placeholder = 'Enter your text here';
+break;
+case 'email':
+label = 'Email Address';
+placeholder = 'example@email.com';
+break;
+case 'phone':
+label = 'Phone Number';
+placeholder = '+1 (123) 456-7890';
+break;
+case 'wifi':
+label = 'WiFi Details';
+placeholder = 'WIFI:S:NetworkName;T:WPA;P:Password;;';
+break;
+case 'vcard':
+label = 'Contact Information';
+placeholder = 'BEGIN:VCARD...';
+break;
+}
 
-    <!-- Auth Modal -->
-    <div class="modal" id="auth-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="auth-modal-title">Sign Up</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <form id="auth-form">
-                <div class="form-group">
-                    <label for="auth-email">Email</label>
-                    <input type="email" id="auth-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="auth-password">Password</label>
-                    <input type="password" id="auth-password" required>
-                </div>
-                <div class="form-group" id="confirm-password-group" style="display: none;">
-                    <label for="auth-confirm-password">Confirm Password</label>
-                    <input type="password" id="auth-confirm-password">
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" id="auth-submit-btn">Sign Up</button>
-            </form>
-            <p style="text-align: center; margin-top: 1rem;">
-                <a href="#" id="auth-switch-link">Already have an account? Log in</a>
-            </p>
-        </div>
-    </div>
+contentLabel.textContent = label;
+qrContent.placeholder = placeholder;
+});
 
-    <!-- Upgrade Modal -->
-    <div class="modal" id="upgrade-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Upgrade to Pro</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <p>Unlock all premium features with CodeGen Pro:</p>
-            <ul class="pricing-features" style="margin: 1.5rem 0;">
-                <li>Custom QR Code Colors & Logo</li>
-                <li>Advanced Barcode Formats</li>
-                <li>Premium Business Card Templates</li>
-                <li>High-Resolution & Vector Downloads</li>
-                <li>Unlimited Downloads</li>
-                <li>Unlimited saved creations</li>
-                <li>Priority Support</li>
-            </ul>
-            <p>Choose your plan:</p>
-            <div style="display: flex; gap: 1rem; margin: 1.5rem 0;">
-                <button class="btn btn-premium" style="flex: 1;" id="monthly-plan-btn">Monthly - $9/mo</button>
-                <button class="btn btn-primary" style="flex: 1;" id="yearly-plan-btn">Yearly - $90/yr (Save $18)</button>
-            </div>
-            <p style="font-size: 0.9rem; color: #666;">No commitment. Cancel anytime.</p>
-        </div>
-    </div>
+// Generate QR code
+generateQrBtn.addEventListener('click', function() {
+const content = qrContent.value.trim();
+if (!content) {
+alert('Please enter content for the QR code');
+return;
+}
 
-    <script src="scripts/app.js"></script>
-    <script src="scripts/auth.js"></script>
-    <script src="scripts/qr-generator.js"></script>
-    <script src="scripts/barcode-generator.js"></script>
-    <script src="scripts/business-card.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+// Clear previous QR code
+qrCodeContainer.innerHTML = '';
+
+// Generate new QR code
+QRCode.toCanvas(qrCodeContainer, content, {
+width: parseInt(qrSize.value),
+height: parseInt(qrSize.value),
+color: {
+dark: '#000000',
+light: '#ffffff'
+},
+margin: 1
+}, function(error) {
+if (error) {
+console.error(error);
+qrInfo.textContent = 'Error generating QR code';
+} else {
+qrInfo.textContent = 'Scan this QR code with your device';
+downloadQrBtn.disabled = false;
+}
+});
+});
+
+// Download QR code
+downloadQrBtn.addEventListener('click', function() {
+const canvas = qrCodeContainer.querySelector('canvas');
+if (!canvas) {
+alert('Please generate a QR code first');
+return;
+}
+
+const link = document.createElement('a');
+link.download = 'qrcode.png';
+link.href = canvas.toDataURL('image/png');
+link.click();
+});
+
+// Barcode functionality
+const barcodeType = document.getElementById('barcode-type');
+const barcodeContent = document.getElementById('barcode-content');
+const barcodeWidth = document.getElementById('barcode-width');
+const barcodeHeight = document.getElementById('barcode-height');
+const barcodeText = document.getElementById('barcode-text');
+const widthValue = document.getElementById('width-value');
+const heightValue = document.getElementById('height-value');
+const generateBarcodeBtn = document.getElementById('generate-barcode-btn');
+const downloadBarcodeBtn = document.getElementById('download-barcode-btn');
+const barcodeContainer = document.getElementById('barcode');
+const barcodeInfo = document.querySelector('.barcode-info');
+
+// Update slider values
+barcodeWidth.addEventListener('input', function() {
+widthValue.textContent = this.value;
+});
+
+barcodeHeight.addEventListener('input', function() {
+heightValue.textContent = this.value;
+});
+
+// Generate barcode
+generateBarcodeBtn.addEventListener('click', function() {
+const content = barcodeContent.value.trim();
+if (!content) {
+alert('Please enter content for the barcode');
+return;
+}
+
+try {
+JsBarcode("#barcode", content, {
+format: barcodeType.value,
+width: parseFloat(barcodeWidth.value),
+height: parseInt(barcodeHeight.value),
+displayValue: barcodeText.value === 'true',
+background: "transparent",
+lineColor: "#000000"
+});
+
+barcodeInfo.textContent = 'Your barcode is ready';
+downloadBarcodeBtn.disabled = false;
+} catch (error) {
+console.error(error);
+barcodeInfo.textContent = 'Error generating barcode. Please check your data.';
+}
+});
+
+// Download barcode
+downloadBarcodeBtn.addEventListener('click', function() {
+const svg = barcodeContainer;
+const svgData = new XMLSerializer().serializeToString(svg);
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+const img = new Image();
+
+img.onload = function() {
+canvas.width = img.width;
+canvas.height = img.height;
+ctx.drawImage(img, 0, 0);
+
+const link = document.createElement('a');
+link.download = 'barcode.png';
+link.href = canvas.toDataURL('image/png');
+link.click();
+};
+
+img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+});
+
+// Business Card functionality
+const cardName = document.getElementById('card-name');
+const cardTitle = document.getElementById('card-title');
+const cardCompany = document.getElementById('card-company');
+const cardEmail = document.getElementById('card-email');
+const cardPhone = document.getElementById('card-phone');
+const cardWebsite = document.getElementById('card-website');
+const generateCardBtn = document.getElementById('generate-card-btn');
+const downloadCardBtn = document.getElementById('download-card-btn');
+const downloadVcardBtn = document.getElementById('download-vcard-btn');
+
+// Update card preview
+function updateCardPreview() {
+document.getElementById('preview-name').textContent = cardName.value || 'John Doe';
+document.getElementById('preview-title').textContent = cardTitle.value || 'Marketing Manager';
+document.getElementById('preview-company').textContent = cardCompany.value || 'Your Company';
+document.getElementById('preview-email').textContent = '✉️ ' + (cardEmail.value || 'john@example.com');
+document.getElementById('preview-phone').textContent = '📞 ' + (cardPhone.value || '+1 (123) 456-7890');
+document.getElementById('preview-website').textContent = '🌐 ' + (cardWebsite.value || 'https://example.com');
+}
+
+// Add event listeners to update preview in real-time
+const cardInputs = document.querySelectorAll('#business-card-tab input');
+cardInputs.forEach(input => {
+input.addEventListener('input', updateCardPreview);
+});
+
+// Generate card
+generateCardBtn.addEventListener('click', updateCardPreview);
+
+// Download card as image
+downloadCardBtn.addEventListener('click', function() {
+const cardElement = document.getElementById('business-card');
+
+html2canvas(cardElement).then(canvas => {
+const link = document.createElement('a');
+link.download = 'business-card.png';
+link.href = canvas.toDataURL('image/png');
+link.click();
+});
+});
+
+// Download vCard
+downloadVcardBtn.addEventListener('click', function() {
+const cardData = {
+name: document.getElementById('card-name').value || 'John Doe',
+title: document.getElementById('card-title').value || 'Marketing Manager',
+company: document.getElementById('card-company').value || 'Your Company',
+email: document.getElementById('card-email').value || 'john@example.com',
+phone: document.getElementById('card-phone').value || '+1 (123) 456-7890',
+website: document.getElementById('card-website').value || 'https://example.com'
+};
+
+const vCardData = `BEGIN:VCARD
+VERSION:3.0
+FN:${cardData.name}
+ORG:${cardData.company}
+TITLE:${cardData.title}
+TEL:${cardData.phone}
+EMAIL:${cardData.email}
+URL:${cardData.website}
+END:VCARD`;
+
+const blob = new Blob([vCardData], { type: 'text/vcard' });
+const link = document.createElement('a');
+link.download = 'contact.vcf';
+link.href = URL.createObjectURL(blob);
+link.click();
+});
+
+// Modal functionality
+const authModal = document.getElementById('auth-modal');
+const upgradeModal = document.getElementById('upgrade-modal');
+const upgradeButtons = document.querySelectorAll('.upgrade-btn, .btn-premium');
+const closeModal = document.querySelectorAll('.close-modal');
+
+upgradeButtons.forEach(button => {
+button.addEventListener('click', () => {
+upgradeModal.classList.add('active');
+});
+});
+
+closeModal.forEach(button => {
+button.addEventListener('click', () => {
+authModal.classList.remove('active');
+upgradeModal.classList.remove('active');
+});
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', (e) => {
+if (e.target === authModal) {
+authModal.classList.remove('active');
+}
+if (e.target === upgradeModal) {
+upgradeModal.classList.remove('active');
+}
+});
+
+// Initialize with a sample QR code
+QRCode.toCanvas(qrCodeContainer, 'https://example.com', {
+width: 200,
+height: 200,
+color: {
+dark: '#000000',
+light: '#ffffff'
+},
+margin: 1
+}, function(error) {
+if (!error) {
+qrInfo.textContent = 'Scan this sample QR code';
+downloadQrBtn.disabled = false;
+}
+});
+
+// Initialize with a sample barcode
+JsBarcode("#barcode", "123456789012", {
+format: "CODE128",
+width: 2,
+height: 50,
+displayValue: true
+});
+
+// Plan selection buttons
+document.getElementById('free-plan-btn').addEventListener('click', () => {
+authModal.classList.add('active');
+});
+
+document.getElementById('pro-plan-btn').addEventListener('click', () => {
+upgradeModal.classList.add('active');
+});
+
+document.getElementById('team-plan-btn').addEventListener('click', () => {
+alert('Please contact sales@codegenpro.com for team pricing');
+});
+
+document.getElementById('get-started-btn').addEventListener('click', () => {
+authModal.classList.add('active');
+});
+
+document.getElementById('upgrade-hero-btn').addEventListener('click', () => {
+upgradeModal.classList.add('active');
+});
+
+// Upgrade modal plan buttons
+document.getElementById('monthly-plan-btn').addEventListener('click', () => {
+alert('Monthly subscription selected. Payment integration would go here.');
+});
+
+document.getElementById('yearly-plan-btn').addEventListener('click', () => {
+alert('Yearly subscription selected. Payment integration would go here.');
+});
+</script>
 </body>
 </html>
