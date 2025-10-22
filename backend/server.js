@@ -17,3 +17,9 @@ const PORT = process.env.PORT || 10000;
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 });
+import cors from "cors";
+
+app.use(cors({
+  origin: ["https://qr-saas-frontend.vercel.app"],
+  credentials: true
+}));
