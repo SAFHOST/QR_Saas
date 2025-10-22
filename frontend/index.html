@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeGen Pro - QR, Barcode & Business Card Generator</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <span class="logo-icon">⚡</span>
+                    <span>CodeGen Pro</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#about">About</a>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" id="login-btn">Log In</button>
+                    <button class="btn btn-primary" id="signup-btn">Sign Up</button>
+                    <div class="user-menu" id="user-menu" style="display: none;">
+                        <span id="user-email"></span>
+                        <button class="btn btn-outline" id="logout-btn">Logout</button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Generate QR Codes, Barcodes & Business Cards</h1>
+            <p>Create professional codes and cards in seconds. Free for basic use, upgrade for advanced features.</p>
+            <div>
+                <button class="btn btn-primary" style="padding: 0.8rem 1.5rem; margin-right: 1rem;" id="get-started-btn">Get Started Free</button>
+                <button class="btn btn-premium" style="padding: 0.8rem 1.5rem;" id="upgrade-hero-btn">Upgrade to Pro</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main App -->
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" data-tab="qr">QR Code</button>
+            <button class="tab" data-tab="barcode">Barcode</button>
+            <button class="tab" data-tab="business-card">Business Card</button>
+        </div>
+
+        <!-- QR Code Tab -->
+        <div id="qr-tab" class="tab-content active">
+            <div class="main-content">
+                <section class="input-section">
+                    <h2>Create Your QR Code</h2>
+                    <p>Free features with optional premium upgrades</p>
+
+                    <div class="form-group">
+                        <label for="qr-content">Content Type</label>
+                        <select id="qr-type">
+                            <option value="url">Website URL</option>
+                            <option value="text">Plain Text</option>
+                            <option value="email">Email</option>
+                            <option value="phone">Phone Number</option>
+                            <option value="wifi">WiFi Network</option>
+                            <option value="vcard">Contact (vCard)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="qr-content" id="content-label">Website URL</label>
+                        <input type="text" id="qr-content" placeholder="https://example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Customize Appearance <span class="premium-badge">PRO</span></label>
+                        <div class="color-options premium-feature">
+                            <div class="color-input">
+                                <label for="qr-color">QR Color</label>
+                                <input type="color" id="qr-color" value="#000000" disabled>
+                            </div>
+                            <div class="color-input">
+                                <label for="qr-bg">Background</label>
+                                <input type="color" id="qr-bg" value="#ffffff" disabled>
+                            </div>
+                            <div class="premium-overlay">
+                                <p>Premium Feature</p>
+                                <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="qr-size">Size</label>
+                        <select id="qr-size">
+                            <option value="200">Small (200x200)</option>
+                            <option value="300" selected>Medium (300x300)</option>
+                            <option value="400">Large (400x400)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group premium-feature">
+                        <label for="qr-logo">Add Logo <span class="premium-badge">PRO</span></label>
+                        <input type="file" id="qr-logo" accept="image/*" disabled>
+                        <div class="premium-overlay">
+                            <p>Premium Feature</p>
+                            <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
+                        </div>
+                    </div>
+
+                    <button id="generate-qr-btn" class="btn btn-primary">Generate QR Code</button>
+                    <button id="save-qr-btn" class="btn btn-outline" style="margin-top: 0.5rem; display: none;">Save to Account</button>
+                </section>
+
+                <section class="preview-section">
+                    <h2>Your QR Code</h2>
+                    <p>Preview and download your QR code</p>
+
+                    <div class="qr-container">
+                        <div id="qrcode"></div>
+                    </div>
+
+                    <p class="qr-info">Your QR code will appear here</p>
+
+                    <button id="download-qr-btn" class="btn btn-download" disabled>Download QR Code</button>
+                    <button class="btn btn-premium" style="margin-top: 0.5rem; width: 100%;">Download High-Res (PRO)</button>
+                </section>
+            </div>
+        </div>
+
+        <!-- Barcode Tab -->
+        <div id="barcode-tab" class="tab-content">
+            <div class="main-content">
+                <section class="input-section">
+                    <h2>Create Your Barcode</h2>
+                    <p>Generate barcodes for products, inventory, or tracking</p>
+
+                    <div class="form-group">
+                        <label for="barcode-type">Barcode Type</label>
+                        <select id="barcode-type">
+                            <option value="CODE128">CODE128</option>
+                            <option value="EAN13">EAN-13</option>
+                            <option value="UPC">UPC</option>
+                            <option value="CODE39">CODE39</option>
+                            <option value="ITF14">ITF-14</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="barcode-content">Barcode Data</label>
+                        <input type="text" id="barcode-content" placeholder="Enter barcode data">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="barcode-width">Width</label>
+                        <input type="range" id="barcode-width" min="1" max="4" step="0.5" value="2">
+                        <span id="width-value">2</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="barcode-height">Height</label>
+                        <input type="range" id="barcode-height" min="20" max="100" value="50">
+                        <span id="height-value">50</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="barcode-text">Display Text</label>
+                        <select id="barcode-text">
+                            <option value="true">Show Text</option>
+                            <option value="false">Hide Text</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group premium-feature">
+                        <label for="barcode-color">Custom Color <span class="premium-badge">PRO</span></label>
+                        <input type="color" id="barcode-color" value="#000000" disabled>
+                        <div class="premium-overlay">
+                            <p>Premium Feature</p>
+                            <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
+                        </div>
+                    </div>
+
+                    <button id="generate-barcode-btn" class="btn btn-primary">Generate Barcode</button>
+                    <button id="save-barcode-btn" class="btn btn-outline" style="margin-top: 0.5rem; display: none;">Save to Account</button>
+                </section>
+
+                <section class="preview-section">
+                    <h2>Your Barcode</h2>
+                    <p>Preview and download your barcode</p>
+
+                    <div class="barcode-container">
+                        <svg id="barcode"></svg>
+                    </div>
+
+                    <p class="barcode-info">Your barcode will appear here</p>
+
+                    <button id="download-barcode-btn" class="btn btn-download" disabled>Download Barcode</button>
+                    <button class="btn btn-premium" style="margin-top: 0.5rem; width: 100%;">Download Vector (PRO)</button>
+                </section>
+            </div>
+        </div>
+
+        <!-- Business Card Tab -->
+        <div id="business-card-tab" class="tab-content">
+            <div class="main-content">
+                <section class="input-section">
+                    <h2>Create Your Business Card</h2>
+                    <p>Design a professional digital business card</p>
+
+                    <div class="form-group">
+                        <label for="card-name">Full Name</label>
+                        <input type="text" id="card-name" placeholder="John Doe">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card-title">Job Title</label>
+                        <input type="text" id="card-title" placeholder="Marketing Manager">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card-company">Company</label>
+                        <input type="text" id="card-company" placeholder="Your Company">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card-email">Email</label>
+                        <input type="email" id="card-email" placeholder="john@example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card-phone">Phone</label>
+                        <input type="tel" id="card-phone" placeholder="+1 (123) 456-7890">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card-website">Website</label>
+                        <input type="url" id="card-website" placeholder="https://example.com">
+                    </div>
+
+                    <div class="form-group premium-feature">
+                        <label for="card-logo">Upload Logo <span class="premium-badge">PRO</span></label>
+                        <input type="file" id="card-logo" accept="image/*" disabled>
+                        <div class="premium-overlay">
+                            <p>Premium Feature</p>
+                            <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group premium-feature">
+                        <label for="card-template">Premium Templates <span class="premium-badge">PRO</span></label>
+                        <select id="card-template" disabled>
+                            <option value="default">Default</option>
+                            <option value="modern">Modern</option>
+                            <option value="elegant">Elegant</option>
+                            <option value="creative">Creative</option>
+                        </select>
+                        <div class="premium-overlay">
+                            <p>Premium Feature</p>
+                            <button class="btn btn-premium upgrade-btn">Upgrade to Pro</button>
+                        </div>
+                    </div>
+
+                    <button id="generate-card-btn" class="btn btn-primary">Generate Business Card</button>
+                    <button id="save-card-btn" class="btn btn-outline" style="margin-top: 0.5rem; display: none;">Save to Account</button>
+                </section>
+
+                <section class="preview-section">
+                    <h2>Your Business Card</h2>
+                    <p>Preview and download your digital business card</p>
+
+                    <div class="business-card-preview" id="business-card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-name" id="preview-name">John Doe</div>
+                                <div class="card-title" id="preview-title">Marketing Manager</div>
+                                <div class="card-company" id="preview-company">Your Company</div>
+                            </div>
+                            <div class="card-logo">LOGO</div>
+                        </div>
+
+                        <div class="card-contact">
+                            <div id="preview-email">✉️ john@example.com</div>
+                            <div id="preview-phone">📞 +1 (123) 456-7890</div>
+                            <div id="preview-website">🌐 https://example.com</div>
+                        </div>
+                    </div>
+
+                    <button id="download-card-btn" class="btn btn-download">Download Business Card</button>
+                    <button id="download-vcard-btn" class="btn btn-premium" style="margin-top: 0.5rem; width: 100%;">Download vCard (PRO)</button>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Creations Section (Logged in users) -->
+    <section id="my-creations" class="creations-section" style="display: none;">
+        <div class="container">
+            <h2>My Creations</h2>
+            <div class="creations-grid" id="creations-grid">
+                <!-- Dynamically populated with user's saved creations -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2>Simple, Transparent Pricing</h2>
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <h3>Free</h3>
+                    <div class="price">$0 <span class="period">/ forever</span></div>
+                    <ul class="pricing-features">
+                        <li>Basic QR Code Generation</li>
+                        <li>Standard Barcode Creation</li>
+                        <li>Simple Business Card Design</li>
+                        <li>Standard Resolution Downloads</li>
+                        <li>5 Downloads per Month</li>
+                        <li>Save up to 10 creations</li>
+                    </ul>
+                    <button class="btn btn-outline" style="width: 100%;" id="free-plan-btn">Get Started</button>
+                </div>
+
+                <div class="pricing-card popular">
+                    <div class="popular-badge">MOST POPULAR</div>
+                    <h3>Pro</h3>
+                    <div class="price">$9 <span class="period">/ month</span></div>
+                    <ul class="pricing-features">
+                        <li>All Free Features</li>
+                        <li>Custom QR Code Colors & Logo</li>
+                        <li>Advanced Barcode Formats</li>
+                        <li>Premium Business Card Templates</li>
+                        <li>High-Resolution & Vector Downloads</li>
+                        <li>Unlimited Downloads</li>
+                        <li>Unlimited saved creations</li>
+                        <li>Priority Support</li>
+                    </ul>
+                    <button class="btn btn-premium" style="width: 100%;" id="pro-plan-btn">Upgrade to Pro</button>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Team</h3>
+                    <div class="price">$29 <span class="period">/ month</span></div>
+                    <ul class="pricing-features">
+                        <li>All Pro Features</li>
+                        <li>Up to 5 Team Members</li>
+                        <li>Brand Kit Management</li>
+                        <li>API Access</li>
+                        <li>Bulk Generation</li>
+                        <li>Advanced Analytics</li>
+                        <li>Dedicated Account Manager</li>
+                    </ul>
+                    <button class="btn btn-outline" style="width: 100%;" id="team-plan-btn">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>CodeGen Pro</h3>
+                    <p>Create professional QR codes, barcodes, and business cards in seconds.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Product</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Use Cases</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 CodeGen Pro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="auth-modal-title">Sign Up</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="auth-form">
+                <div class="form-group">
+                    <label for="auth-email">Email</label>
+                    <input type="email" id="auth-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="auth-password">Password</label>
+                    <input type="password" id="auth-password" required>
+                </div>
+                <div class="form-group" id="confirm-password-group" style="display: none;">
+                    <label for="auth-confirm-password">Confirm Password</label>
+                    <input type="password" id="auth-confirm-password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" id="auth-submit-btn">Sign Up</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                <a href="#" id="auth-switch-link">Already have an account? Log in</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div class="modal" id="upgrade-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Upgrade to Pro</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <p>Unlock all premium features with CodeGen Pro:</p>
+            <ul class="pricing-features" style="margin: 1.5rem 0;">
+                <li>Custom QR Code Colors & Logo</li>
+                <li>Advanced Barcode Formats</li>
+                <li>Premium Business Card Templates</li>
+                <li>High-Resolution & Vector Downloads</li>
+                <li>Unlimited Downloads</li>
+                <li>Unlimited saved creations</li>
+                <li>Priority Support</li>
+            </ul>
+            <p>Choose your plan:</p>
+            <div style="display: flex; gap: 1rem; margin: 1.5rem 0;">
+                <button class="btn btn-premium" style="flex: 1;" id="monthly-plan-btn">Monthly - $9/mo</button>
+                <button class="btn btn-primary" style="flex: 1;" id="yearly-plan-btn">Yearly - $90/yr (Save $18)</button>
+            </div>
+            <p style="font-size: 0.9rem; color: #666;">No commitment. Cancel anytime.</p>
+        </div>
+    </div>
+
+    <script src="scripts/app.js"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/qr-generator.js"></script>
+    <script src="scripts/barcode-generator.js"></script>
+    <script src="scripts/business-card.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
