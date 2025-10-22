@@ -1,3 +1,18 @@
+import { API_BASE } from "./config.js";
+
+async function testConnection() {
+  try {
+    const res = await fetch(`${API_BASE}/health`);
+    const data = await res.json();
+    console.log("Backend connection:", data);
+  } catch (err) {
+    console.error("Connection failed:", err);
+  }
+}
+
+testConnection();
+
+
 class QRGenerator {
    constructor() {
        this.currentQRCode = null;
