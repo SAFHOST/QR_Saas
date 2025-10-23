@@ -2,6 +2,7 @@
 // If you have a config.js, keep this import and make sure the HTML uses type="module".
 // Otherwise, comment it out or define API_BASE inline.
 // import { API_BASE } from "./config.js";
+import QRCode from "https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.esm.js";
 
 async function testConnection() {
   try {
