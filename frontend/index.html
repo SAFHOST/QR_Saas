@@ -1448,75 +1448,6 @@ Sign Up
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
- 
-// Elements
-const qrType = document.getElementById('qr-type');
-const contentLabel = document.getElementById('content-label');
-const qrContent = document.getElementById('qr-content');
-const qrSize = document.getElementById('qr-size');
-const generateQrBtn = document.getElementById('generate-qr-btn');
-const downloadQrBtn = document.getElementById('download-qr-btn');
-const qrCodeContainer = document.getElementById('qrcode');
-const qrInfo = document.querySelector('.qr-info');
-
-// Generate QR (FIXED)
-generateQrBtn.addEventListener('click', function () {
-  const content = (qrContent.value || '').trim();
-  if (!content) {
-    alert('Please enter content for the QR code');
-    return;
-  }
-
-  // Clear and render into a real <canvas>
-  qrCodeContainer.innerHTML = '';
-  const canvas = document.createElement('canvas');
-  qrCodeContainer.appendChild(canvas);
-
-  QRCode.toCanvas(canvas, content, {
-    width: parseInt(qrSize.value, 10) || 300,
-    margin: 1,
-    color: { dark: '#000000', light: '#ffffff' }
-  }, function (error) {
-    if (error) {
-      console.error(error);
-      qrInfo.textContent = 'Error generating QR code';
-      downloadQrBtn.disabled = true;
-    } else {
-      qrInfo.textContent = 'Scan this QR code with your device';
-      downloadQrBtn.disabled = false;
-    }
-  });
-});
-
-// Download QR
-downloadQrBtn.addEventListener('click', function () {
-  const canvas = qrCodeContainer.querySelector('canvas');
-  if (!canvas) {
-    alert('Please generate a QR code first');
-    return;
-  }
-  const link = document.createElement('a');
-  link.download = 'qrcode.png';
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-});
-
-// Sample QR on load (your snippet)
-qrCodeContainer.innerHTML = '';
-const sampleCanvas = document.createElement('canvas');
-qrCodeContainer.appendChild(sampleCanvas);
-QRCode.toCanvas(sampleCanvas, 'https://example.com', {
-  width: 200,
-  margin: 1,
-  color: { dark: '#000000', light: '#ffffff' }
-}, function (error) {
-  if (!error) {
-    qrInfo.textContent = 'Scan this sample QR code';
-    downloadQrBtn.disabled = false;
-  }
-});
-
-
 // Tab functionality
 const tabs = document.querySelectorAll('.tab');
 const tabContents = document.querySelectorAll('.tab-content');
@@ -1617,16 +1548,15 @@ downloadQrBtn.disabled = false;
 
 // Download QR code
 downloadQrBtn.addEventListener('click', function() {
-const canvas = qrCodeContainer.querySelector('canvas');
-if (!canvas) {
-alert('Please generate a QR code first');
-return;
-}
-
-const link = document.createElement('a');
-link.download = 'qrcode.png';
-link.href = canvas.toDataURL('image/png');
-link.click();
+  const canvas = qrCodeContainer.querySelector('canvas');
+  if (!canvas) {
+    alert('Please generate a QR code first');
+    return;
+  }
+  const link = document.createElement('a');
+  link.download = 'qrcode.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
 });
 
 // Barcode functionality
