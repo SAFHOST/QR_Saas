@@ -1524,10 +1524,12 @@ return;
 // Clear previous QR code
 qrCodeContainer.innerHTML = '';
 
-// Generate new QR code
-QRCode.toCanvas(qrCodeContainer, content, {
+// Generate new QR code into a canvas
+const canvas = document.createElement('canvas');
+qrCodeContainer.appendChild(canvas);
+
+QRCode.toCanvas(canvas, content, {
 width: parseInt(qrSize.value),
-height: parseInt(qrSize.value),
 color: {
 dark: '#000000',
 light: '#ffffff'
@@ -1728,9 +1730,11 @@ upgradeModal.classList.remove('active');
 });
 
 // Initialize with a sample QR code
-QRCode.toCanvas(qrCodeContainer, 'https://example.com', {
+qrCodeContainer.innerHTML = '';
+const sampleCanvas = document.createElement('canvas');
+qrCodeContainer.appendChild(sampleCanvas);
+QRCode.toCanvas(sampleCanvas, 'https://example.com', {
 width: 200,
-height: 200,
 color: {
 dark: '#000000',
 light: '#ffffff'
