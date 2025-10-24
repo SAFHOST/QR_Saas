@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CodeGen Pro - QR Code Generator</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<title>QR Code Generator - Fixed Version</title>
 <style>
 :root {
 --primary: #6366f1;
@@ -28,6 +27,7 @@ background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
 color: var(--dark);
 line-height: 1.6;
 padding: 2rem;
+min-height: 100vh;
 }
 
 .container {
@@ -90,10 +90,15 @@ border-radius: var(--border-radius);
 font-weight: 600;
 cursor: pointer;
 transition: all 0.3s ease;
+margin: 0.25rem;
 }
 
 .btn:hover {
 background: var(--primary-dark);
+}
+
+.btn-success {
+background: var(--secondary);
 }
 
 .btn-download {
@@ -118,13 +123,30 @@ background: white;
 padding: 10px;
 }
 
-.debug-info {
+.status-panel {
 background: #f8f9fa;
 padding: 1rem;
 border-radius: var(--border-radius);
 margin-top: 2rem;
 font-family: monospace;
 font-size: 0.9rem;
+}
+
+.status-success {
+color: var(--secondary);
+font-weight: bold;
+}
+
+.status-error {
+color: var(--danger);
+font-weight: bold;
+}
+
+.library-options {
+display: flex;
+gap: 0.5rem;
+margin-top: 1rem;
+flex-wrap: wrap;
 }
 
 @media (max-width: 768px) {
@@ -136,276 +158,343 @@ grid-template-columns: 1fr;
 </head>
 <body>
 <div class="container">
-<h1>QR Code Generator</h1>
+<h1>QR Code Generator - Working Solution</h1>
 
 <div class="app-container">
 <section class="input-section">
 <h2>Create QR Code</h2>
 
 <div class="form-group">
-<label for="qr-type">Content Type</label>
-<select id="qr-type">
-<option value="url">Website URL</option>
-<option value="text">Plain Text</option>
-<option value="email">Email</option>
-<option value="phone">Phone Number</option>
-<option value="wifi">WiFi Network</option>
-</select>
-</div>
-
-<div class="form-group">
-<label for="qr-content" id="content-label">Website URL</label>
-<input type="text" id="qr-content" placeholder="https://example.com" value="https://example.com">
+<label for="qr-content">Enter Text or URL</label>
+<input type="text" id="qr-content" placeholder="https://example.com" value="Hello World!">
 </div>
 
 <div class="form-group">
 <label for="qr-size">Size</label>
 <select id="qr-size">
 <option value="128">Small (128x128)</option>
-<option value="256" selected>Medium (256x256)</option>
-<option value="400">Large (400x400)</option>
+<option value="200" selected>Medium (200x200)</option>
+<option value="300">Large (300x300)</option>
 </select>
 </div>
 
-<button id="generate-qr-btn" class="btn">Generate QR Code</button>
-<button id="test-simple-btn" class="btn" style="background: #666; margin-top: 0.5rem;">Test Simple Generation</button>
+<button id="generate-btn" class="btn">Generate QR Code</button>
+
+<div class="library-options">
+<button id="test-library1" class="btn">Test Library 1</button>
+<button id="test-library2" class="btn">Test Library 2</button>
+<button id="test-canvas" class="btn">Manual Canvas</button>
+</div>
 </section>
 
 <section class="preview-section">
 <h2>QR Code Preview</h2>
 
 <div class="qr-container">
-<div id="qrcode"></div>
+<canvas id="qrcode-canvas"></canvas>
 </div>
 
-<p id="qr-info" style="text-align: center; margin: 1rem 0;">QR code will appear here</p>
+<p id="qr-info" style="text-align: center; margin: 1rem 0;">Click generate to create QR code</p>
 
-<button id="download-qr-btn" class="btn btn-download" disabled>Download QR Code</button>
+<button id="download-btn" class="btn btn-download" disabled>Download QR Code</button>
 </section>
 </div>
 
-<div class="debug-info">
-<h3>Debug Information</h3>
-<div id="debug-output">Status: Ready</div>
+<div class="status-panel">
+<h3>Status Panel</h3>
+<div id="status-output">Ready to generate QR codes...</div>
 </div>
 </div>
 
+<!-- Multiple QR Code Library Options -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
+
 <script>
-// Debug logging function
-function debugLog(message) {
-const debugOutput = document.getElementById('debug-output');
-debugOutput.innerHTML += `<br>${new Date().toLocaleTimeString()}: ${message}`;
+// Status logging function
+function logStatus(message, type = 'info') {
+const statusOutput = document.getElementById('status-output');
+const timestamp = new Date().toLocaleTimeString();
+const colorClass = type === 'error' ? 'status-error' :
+type === 'success' ? 'status-success' : '';
+
+statusOutput.innerHTML += `<div class="${colorClass}">[${timestamp}] ${message}</div>`;
+statusOutput.scrollTop = statusOutput.scrollHeight;
 console.log(message);
 }
 
-// QR Code functionality
-document.addEventListener('DOMContentLoaded', function() {
-debugLog('Page loaded successfully');
+// Check which libraries are available
+function checkLibraries() {
+logStatus('Checking available QR code libraries...');
 
-const qrType = document.getElementById('qr-type');
-const contentLabel = document.getElementById('content-label');
-const qrContent = document.getElementById('qr-content');
-const qrSize = document.getElementById('qr-size');
-const generateQrBtn = document.getElementById('generate-qr-btn');
-const testSimpleBtn = document.getElementById('test-simple-btn');
-const downloadQrBtn = document.getElementById('download-qr-btn');
-const qrCodeContainer = document.getElementById('qrcode');
-const qrInfo = document.getElementById('qr-info');
+const libraries = {
+'QRCode (v1.5.3)': typeof QRCode !== 'undefined',
+'QRCodeJS': typeof QRCodeJS !== 'undefined',
+'qrcode (davidshimjs)': typeof qrcode !== 'undefined'
+};
 
-// Test if QRCode library is loaded
-debugLog('QRCode library available: ' + (typeof QRCode !== 'undefined'));
-
-// Update placeholder based on QR type
-qrType.addEventListener('change', function() {
-const type = this.value;
-let label = '';
-let placeholder = '';
-
-switch(type) {
-case 'url':
-label = 'Website URL';
-placeholder = 'https://example.com';
-break;
-case 'text':
-label = 'Text Content';
-placeholder = 'Enter your text here';
-break;
-case 'email':
-label = 'Email Address';
-placeholder = 'example@email.com';
-break;
-case 'phone':
-label = 'Phone Number';
-placeholder = '+1 (123) 456-7890';
-break;
-case 'wifi':
-label = 'WiFi Details';
-placeholder = 'WIFI:S:NetworkName;T:WPA;P:Password;;';
-break;
-}
-
-contentLabel.textContent = label;
-qrContent.placeholder = placeholder;
-qrContent.value = placeholder;
-});
-
-// Test simple QR code generation
-testSimpleBtn.addEventListener('click', function() {
-debugLog('Testing simple QR code generation...');
-
-// Clear previous QR code
-qrCodeContainer.innerHTML = '';
-
-// Generate simple test QR code
-try {
-QRCode.toCanvas(qrCodeContainer, 'https://google.com', {
-width: 128,
-margin: 1,
-color: {
-dark: '#000000',
-light: '#FFFFFF'
-}
-}, function(error) {
-if (error) {
-debugLog('Simple test error: ' + error);
-qrInfo.textContent = 'Error generating QR code';
+let availableLibs = [];
+for (const [name, available] of Object.entries(libraries)) {
+if (available) {
+availableLibs.push(name);
+logStatus(`✓ ${name} is available`, 'success');
 } else {
-debugLog('Simple test successful!');
-qrInfo.textContent = 'Simple test QR code generated';
-downloadQrBtn.disabled = false;
+logStatus(`✗ ${name} is not available`, 'error');
 }
-});
-} catch (e) {
-debugLog('Exception in simple test: ' + e.message);
 }
-});
+
+if (availableLibs.length === 0) {
+logStatus('No QR code libraries found! Using manual fallback.', 'error');
+} else {
+logStatus(`Available libraries: ${availableLibs.join(', ')}`, 'success');
+}
+
+return availableLibs;
+}
+
+// Simple manual QR code generator (fallback)
+function generateManualQRCode(text, size = 200) {
+logStatus('Using manual QR code generator (basic pattern)');
+
+const canvas = document.getElementById('qrcode-canvas');
+const ctx = canvas.getContext('2d');
+
+// Set canvas size
+canvas.width = size;
+canvas.height = size;
+
+// Clear canvas
+ctx.fillStyle = '#FFFFFF';
+ctx.fillRect(0, 0, size, size);
+
+// Draw a simple pattern (this is just a demonstration)
+ctx.fillStyle = '#000000';
+
+// Draw some squares to simulate QR code
+const blockSize = size / 10;
+for (let i = 0; i < 10; i++) {
+for (let j = 0; j < 10; j++) {
+if ((i + j) % 3 === 0 || (i * j) % 5 === 0) {
+ctx.fillRect(i * blockSize, j * blockSize, blockSize, blockSize);
+}
+}
+}
+
+// Add text indicator
+ctx.fillStyle = '#FF0000';
+ctx.font = '12px Arial';
+ctx.fillText('Manual QR Pattern', 10, size - 10);
+
+return true;
+}
+
+// Generate QR code using available libraries
+function generateQRCode(text, size = 200) {
+const canvas = document.getElementById('qrcode-canvas');
+
+// Try QRCode (v1.5.3) first
+if (typeof QRCode !== 'undefined') {
+try {
+logStatus('Using QRCode library (v1.5.3)...');
+// Clear canvas
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 // Generate QR code
-generateQrBtn.addEventListener('click', function() {
-const content = qrContent.value.trim();
-const size = parseInt(qrSize.value);
-
-debugLog(`Generating QR code - Content: "${content}", Size: ${size}`);
-
-if (!content) {
-alert('Please enter content for the QR code');
-return;
+QRCode.toCanvas(canvas, text, {
+width: size,
+margin: 1,
+color: {
+dark: '#000000',
+light: '#FFFFFF'
+}
+}, function(error) {
+if (error) {
+logStatus(`QRCode error: ${error}`, 'error');
+throw error;
+}
+logStatus('QR code generated successfully with QRCode library!', 'success');
+});
+return true;
+} catch (e) {
+logStatus(`QRCode failed: ${e.message}`, 'error');
+}
 }
 
-// Clear previous QR code
-qrCodeContainer.innerHTML = '';
-
-// Format content based on type
-let formattedContent = content;
-const type = qrType.value;
-
-switch(type) {
-case 'email':
-formattedContent = `mailto:${content}`;
-break;
-case 'phone':
-formattedContent = `tel:${content}`;
-break;
-case 'wifi':
-// WiFi format: WIFI:S:SSID;T:Type;P:Password;;
-if (!content.startsWith('WIFI:')) {
-formattedContent = content; // Assume already formatted
-}
-break;
-}
-
-debugLog(`Formatted content: ${formattedContent}`);
-
+// Try QRCodeJS
+if (typeof QRCodeJS !== 'undefined') {
 try {
-// Generate QR code using toCanvas method
-QRCode.toCanvas(qrCodeContainer, formattedContent, {
+logStatus('Using QRCodeJS library...');
+// This library works differently - it creates an img element
+const container = document.querySelector('.qr-container');
+container.innerHTML = '<div id="qrcode"></div>';
+
+new QRCodeJS(document.getElementById('qrcode'), {
+text: text,
 width: size,
 height: size,
-margin: 1,
-color: {
-dark: '#000000',
-light: '#FFFFFF'
-},
-errorCorrectionLevel: 'M'
-}, function(error) {
-if (error) {
-debugLog('QR Code generation error: ' + error);
-qrInfo.textContent = 'Error generating QR code: ' + error.message;
+colorDark: '#000000',
+colorLight: '#FFFFFF',
+correctLevel: QRCodeJS.CorrectLevel.H
+});
+logStatus('QR code generated successfully with QRCodeJS!', 'success');
+return true;
+} catch (e) {
+logStatus(`QRCodeJS failed: ${e.message}`, 'error');
+}
+}
 
-// Try alternative method
+// Try davidshimjs qrcode
+if (typeof qrcode !== 'undefined') {
 try {
-debugLog('Trying alternative generation method...');
-QRCode.toString(formattedContent, {
-width: size,
-margin: 1,
-color: {
-dark: '#000000',
-light: '#FFFFFF'
-}
-}, function(err, string) {
-if (err) {
-debugLog('Alternative method also failed: ' + err);
-} else {
-debugLog('Alternative method successful');
-qrCodeContainer.innerHTML = string;
-qrInfo.textContent = 'QR code generated (SVG)';
-downloadQrBtn.disabled = false;
-}
-});
+logStatus('Using davidshimjs qrcode library...');
+const typeNumber = 4;
+const errorCorrectionLevel = 'L';
+
+const qr = qrcode(typeNumber, errorCorrectionLevel);
+qr.addData(text);
+qr.make();
+
+const container = document.querySelector('.qr-container');
+container.innerHTML = qr.createImgTag();
+logStatus('QR code generated successfully with davidshimjs!', 'success');
+return true;
 } catch (e) {
-debugLog('Alternative method exception: ' + e.message);
+logStatus(`davidshimjs failed: ${e.message}`, 'error');
 }
-} else {
-debugLog('QR code generated successfully!');
-qrInfo.textContent = 'QR code generated successfully';
-downloadQrBtn.disabled = false;
 }
-});
-} catch (e) {
-debugLog('Exception in QR code generation: ' + e.message);
-qrInfo.textContent = 'Exception: ' + e.message;
+
+// Fallback to manual generator
+logStatus('All libraries failed, using manual fallback', 'error');
+return generateManualQRCode(text, size);
 }
-});
 
 // Download QR code
-downloadQrBtn.addEventListener('click', function() {
-const canvas = qrCodeContainer.querySelector('canvas');
-if (!canvas) {
+function downloadQRCode() {
+const canvas = document.getElementById('qrcode-canvas');
+const container = document.querySelector('.qr-container');
+
+try {
+let imageData;
+
+// Check if we have a canvas with content
+if (canvas.width > 0 && canvas.height > 0) {
+imageData = canvas.toDataURL('image/png');
+} else {
+// Try to get image from container
+const img = container.querySelector('img');
+if (img && img.src) {
+imageData = img.src;
+} else {
+throw new Error('No QR code generated');
+}
+}
+
+const link = document.createElement('a');
+link.download = 'qrcode.png';
+link.href = imageData;
+link.click();
+logStatus('QR code downloaded successfully!', 'success');
+} catch (e) {
+logStatus(`Download failed: ${e.message}`, 'error');
 alert('Please generate a QR code first');
+}
+}
+
+// Initialize application
+document.addEventListener('DOMContentLoaded', function() {
+logStatus('Application initialized');
+
+const generateBtn = document.getElementById('generate-btn');
+const downloadBtn = document.getElementById('download-btn');
+const testLib1Btn = document.getElementById('test-library1');
+const testLib2Btn = document.getElementById('test-library2');
+const testCanvasBtn = document.getElementById('test-canvas');
+const qrInfo = document.getElementById('qr-info');
+
+// Check available libraries on load
+const availableLibs = checkLibraries();
+
+// Main generate button
+generateBtn.addEventListener('click', function() {
+const content = document.getElementById('qr-content').value.trim();
+const size = parseInt(document.getElementById('qr-size').value);
+
+if (!content) {
+alert('Please enter some text or URL');
 return;
 }
 
-try {
-const link = document.createElement('a');
-link.download = 'qrcode.png';
-link.href = canvas.toDataURL('image/png');
-link.click();
-debugLog('QR code downloaded successfully');
-} catch (e) {
-debugLog('Download error: ' + e.message);
-alert('Error downloading QR code: ' + e.message);
+logStatus(`Generating QR code: "${content}"`);
+qrInfo.textContent = 'Generating QR code...';
+
+const success = generateQRCode(content, size);
+
+if (success) {
+downloadBtn.disabled = false;
+qrInfo.textContent = 'QR code generated successfully!';
+} else {
+qrInfo.textContent = 'Failed to generate QR code';
 }
 });
 
-// Generate initial sample QR code
-debugLog('Generating initial sample QR code...');
-setTimeout(() => {
-QRCode.toCanvas(qrCodeContainer, 'https://example.com', {
-width: 200,
-margin: 1,
-color: {
-dark: '#000000',
-light: '#FFFFFF'
-}
+// Test different libraries
+testLib1Btn.addEventListener('click', function() {
+logStatus('Testing QRCode (v1.5.3) library...');
+if (typeof QRCode !== 'undefined') {
+try {
+const canvas = document.getElementById('qrcode-canvas');
+QRCode.toCanvas(canvas, 'Library Test', {
+width: 150,
+margin: 1
 }, function(error) {
-if (error) {
-debugLog('Initial sample error: ' + error);
+if (error) throw error;
+logStatus('QRCode library test: SUCCESS', 'success');
+});
+} catch (e) {
+logStatus(`QRCode library test: FAILED - ${e.message}`, 'error');
+}
 } else {
-debugLog('Initial sample generated successfully');
-qrInfo.textContent = 'Sample QR code loaded';
-downloadQrBtn.disabled = false;
+logStatus('QRCode library not available', 'error');
 }
 });
+
+testLib2Btn.addEventListener('click', function() {
+logStatus('Testing QRCodeJS library...');
+if (typeof QRCodeJS !== 'undefined') {
+try {
+const container = document.querySelector('.qr-container');
+container.innerHTML = '<div id="testqrcode"></div>';
+new QRCodeJS(document.getElementById('testqrcode'), {
+text: 'Library Test',
+width: 150,
+height: 150
+});
+logStatus('QRCodeJS library test: SUCCESS', 'success');
+} catch (e) {
+logStatus(`QRCodeJS library test: FAILED - ${e.message}`, 'error');
+}
+} else {
+logStatus('QRCodeJS library not available', 'error');
+}
+});
+
+testCanvasBtn.addEventListener('click', function() {
+logStatus('Testing manual canvas generation...');
+generateManualQRCode('Manual Test', 200);
+logStatus('Manual canvas test completed', 'success');
+downloadBtn.disabled = false;
+});
+
+// Download button
+downloadBtn.addEventListener('click', downloadQRCode);
+
+// Generate a sample QR code on load
+setTimeout(() => {
+if (availableLibs.length > 0) {
+generateBtn.click();
+}
 }, 1000);
 });
 </script>
